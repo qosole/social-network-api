@@ -63,4 +63,18 @@ module.exports = {
         )
         .catch((err) => res.status(500).json(err));
   },
+  // Remove a friend by ID from a user's friends list by ID
+  deleteFriend(req, res) {
+    User.findOneAndUpdate(
+        { _id: req.params.userId },
+        { $pull: { friends: req.params.friendId } },
+        { runValidators: true, new: true }
+    )
+        .then((user) =>
+            !user
+                ? res.status(404).json({ message: 'No user with this id! '})
+                : res.json(user)
+        )
+        .catch((err) => res.status(500).json(err));
+  }
 };
