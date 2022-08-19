@@ -58,8 +58,12 @@ module.exports = {
       .then((thought) =>
         !thought
           ? res.status(404).json({ message: 'No thought with this id!' })
-          : res.json({ message: 'Thought deleted!' })
+          : User.findOneAndUpdate(
+            { username: thought.username },
+            { $pull: { thoughts: thought._id.toString() } }
+          )
       )
+      .then(() => res.json({ message: 'Thought deleted!' }))
       .catch((err) => res.status(500).json(err));
   },
   // Create a reaction in a thought's reaction field (by the thought's id)
