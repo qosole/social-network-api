@@ -22,12 +22,16 @@ module.exports = {
   createThought(req, res) {
     Thought.create(req.body)
       .then((thought) => {
-        res.json(thought);
         User.findOneAndUpdate(
             { username: req.body.username },
-            { $addtoSet: { thoughts: thought._id } },
-            { runValidators: true }
-        );
+            { $addToSet: { thoughts: thought._id.toString() } },
+            { runValidators: true, new: true }
+        ).then((user) => 
+          !user
+            ? res.status(404).json({ message: 'No user with this id! '})
+            : res.json(user)
+          )
+        
     })
       .catch((err) => {
         console.log(err);
